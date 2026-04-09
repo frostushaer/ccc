@@ -1,8 +1,16 @@
 # Code Crafters Creators
 
+![Next.js](https://img.shields.io/badge/Next.js-13-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+
 Official codebase for codecrafterscreators.com.
 
 Code Crafters Creators is a web development and digital marketing company platform built with Next.js, Prisma, and Tailwind CSS.
+
+This repository includes the public marketing site and authenticated role-based workspaces for admin, client, and employee operations.
 
 ## What this project includes
 
@@ -33,19 +41,19 @@ Code Crafters Creators is a web development and digital marketing company platfo
 npm install
 ```
 
-1. Create environment file:
+2. Create environment file:
 
 ```bash
 cp .env.example .env.local
 ```
 
-1. Run development server:
+3. Run development server:
 
 ```bash
 npm run dev
 ```
 
-1. Generate Prisma client (if needed):
+4. Generate Prisma client (if needed):
 
 ```bash
 npx prisma generate
