@@ -6,11 +6,15 @@ import "./env.mjs"
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["avatars.githubusercontent.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+    ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ["@prisma/client"],
-  },
+  serverExternalPackages: ["@prisma/client"],
+  turbopack: {},
   webpack: (config) => {
     config.ignoreWarnings = [
       ...(config.ignoreWarnings || []),

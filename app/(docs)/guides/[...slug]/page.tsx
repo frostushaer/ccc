@@ -15,18 +15,22 @@ import { env } from "@/env.mjs"
 import { absoluteUrl, cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
+export const dynamic = "force-dynamic"
+
 interface GuidePageProps {
-  params: {
+  params: Promise<{
     slug: string[]
-  }
+  }>
 }
 
-async function getGuideFromParams(params) {
+async function getGuideFromParams(
+  params: Awaited<GuidePageProps["params"]>
+) {
   const slug = params?.slug?.join("/")
   const guide = allGuides.find((guide) => guide.slugAsParams === slug)
 
   if (!guide) {
-    null
+    return null
   }
 
   return guide
@@ -35,7 +39,8 @@ async function getGuideFromParams(params) {
 export async function generateMetadata({
   params,
 }: GuidePageProps): Promise<Metadata> {
-  const guide = await getGuideFromParams(params)
+  const resolvedParams = await params
+  const guide = await getGuideFromParams(resolvedParams)
 
   if (!guide) {
     return {}
@@ -75,7 +80,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams(): Promise<
-  GuidePageProps["params"][]
+  Awaited<GuidePageProps["params"]>[]
 > {
   return allGuides.map((guide) => ({
     slug: guide.slugAsParams.split("/"),
@@ -83,7 +88,8 @@ export async function generateStaticParams(): Promise<
 }
 
 export default async function GuidePage({ params }: GuidePageProps) {
-  const guide = await getGuideFromParams(params)
+  const resolvedParams = await params
+  const guide = await getGuideFromParams(resolvedParams)
 
   if (!guide) {
     notFound()

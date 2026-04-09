@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { env } from "@/env.mjs"
 import { cn } from "@/lib/utils"
@@ -38,7 +39,11 @@ export default function RegisterPage() {
               Enter your email to join Code Crafters Creators.
             </p>
           </div>
-          <UserAuthForm showGitHub={showGitHub} showGoogle={showGoogle} />
+          <Suspense
+            fallback={<div className="h-10 w-full animate-pulse rounded-md bg-muted" />}
+          >
+            <UserAuthForm showGitHub={showGitHub} showGoogle={showGoogle} />
+          </Suspense>
           <p className="px-8 text-center text-sm text-muted-foreground">
             By continuing, you agree to our{" "}
             <Link

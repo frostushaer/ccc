@@ -27,10 +27,12 @@ export function MotionPage({
 export function MotionStagger({
   children,
   className,
-  delayChildren: _delayChildren = 0.08,
-  staggerChildren: _staggerChildren = 0.1,
+  delayChildren = 0.08,
+  staggerChildren = 0.1,
   ...props
 }: MotionContainerProps) {
+  void delayChildren
+  void staggerChildren
   return (
     <div className={cn(className)} {...props}>
       {children}
@@ -41,9 +43,10 @@ export function MotionStagger({
 export function MotionItem({
   children,
   className,
-  y: _y = 18,
+  y = 18,
   ...props
 }: MotionFadeProps) {
+  void y
   return (
     <div className={cn(className)} {...props}>
       {children}
@@ -54,10 +57,12 @@ export function MotionItem({
 export function MotionFade({
   children,
   className,
-  delay: _delay = 0,
-  y: _y = 24,
+  delay = 0,
+  y = 24,
   ...props
 }: MotionFadeProps) {
+  void delay
+  void y
   return (
     <div className={cn(className)} {...props}>
       {children}

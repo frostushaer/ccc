@@ -13,18 +13,20 @@ import { absoluteUrl, cn, formatDate } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 
+export const dynamic = "force-dynamic"
+
 interface PostPageProps {
-  params: {
+  params: Promise<{
     slug: string[]
-  }
+  }>
 }
 
-async function getPostFromParams(params) {
+async function getPostFromParams(params: Awaited<PostPageProps["params"]>) {
   const slug = params?.slug?.join("/")
   const post = allPosts.find((post) => post.slugAsParams === slug)
 
   if (!post) {
-    null
+    return null
   }
 
   return post
@@ -33,7 +35,8 @@ async function getPostFromParams(params) {
 export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
-  const post = await getPostFromParams(params)
+  const resolvedParams = await params
+  const post = await getPostFromParams(resolvedParams)
 
   if (!post) {
     return {}
@@ -76,7 +79,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams(): Promise<
-  PostPageProps["params"][]
+  Awaited<PostPageProps["params"]>[]
 > {
   return allPosts.map((post) => ({
     slug: post.slugAsParams.split("/"),
@@ -84,7 +87,8 @@ export async function generateStaticParams(): Promise<
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostFromParams(params)
+  const resolvedParams = await params
+  const post = await getPostFromParams(resolvedParams)
 
   if (!post) {
     notFound()

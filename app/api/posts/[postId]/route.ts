@@ -11,13 +11,17 @@ const routeContextSchema = z.object({
   }),
 })
 
+type RouteContext = {
+  params: Promise<z.infer<typeof routeContextSchema>["params"]>
+}
+
 export async function DELETE(
   req: Request,
-  context: z.infer<typeof routeContextSchema>
+  context: RouteContext
 ) {
   try {
     // Validate the route params.
-    const { params } = routeContextSchema.parse(context)
+    const params = routeContextSchema.shape.params.parse(await context.params)
 
     // Check if the user has access to this post.
     if (!(await verifyCurrentUserHasAccessToPost(params.postId))) {
@@ -43,11 +47,11 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  context: z.infer<typeof routeContextSchema>
+  context: RouteContext
 ) {
   try {
     // Validate route params.
-    const { params } = routeContextSchema.parse(context)
+    const params = routeContextSchema.shape.params.parse(await context.params)
 
     // Check if the user has access to this post.
     if (!(await verifyCurrentUserHasAccessToPost(params.postId))) {

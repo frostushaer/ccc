@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { env } from "@/env.mjs"
 import { cn } from "@/lib/utils"
@@ -40,7 +41,11 @@ export default function LoginPage() {
             Enter your email to sign in to your Code Crafters Creators account.
           </p>
         </div>
-        <UserAuthForm showGitHub={showGitHub} showGoogle={showGoogle} />
+        <Suspense
+          fallback={<div className="h-10 w-full animate-pulse rounded-md bg-muted" />}
+        >
+          <UserAuthForm showGitHub={showGitHub} showGoogle={showGoogle} />
+        </Suspense>
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link
             href="/register"

@@ -11,13 +11,17 @@ const routeContextSchema = z.object({
   }),
 })
 
+type RouteContext = {
+  params: Promise<z.infer<typeof routeContextSchema>["params"]>
+}
+
 export async function PATCH(
   req: Request,
-  context: z.infer<typeof routeContextSchema>
+  context: RouteContext
 ) {
   try {
     // Validate the route context.
-    const { params } = routeContextSchema.parse(context)
+    const params = routeContextSchema.shape.params.parse(await context.params)
 
     // Ensure user is authentication and has access to this user.
     const session = await getServerSession(authOptions)

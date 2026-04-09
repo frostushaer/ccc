@@ -10,18 +10,20 @@ import { env } from "@/env.mjs"
 import { siteConfig } from "@/config/site"
 import { absoluteUrl } from "@/lib/utils"
 
+export const dynamic = "force-dynamic"
+
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string[]
-  }
+  }>
 }
 
-async function getPageFromParams(params) {
+async function getPageFromParams(params: Awaited<PageProps["params"]>) {
   const slug = params?.slug?.join("/")
   const page = allPages.find((page) => page.slugAsParams === slug)
 
   if (!page) {
-    null
+    return null
   }
 
   return page
@@ -30,7 +32,8 @@ async function getPageFromParams(params) {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const page = await getPageFromParams(params)
+  const resolvedParams = await params
+  const page = await getPageFromParams(resolvedParams)
 
   if (!page) {
     return {}
@@ -69,14 +72,17 @@ export async function generateMetadata({
   }
 }
 
-export async function generateStaticParams(): Promise<PageProps["params"][]> {
+export async function generateStaticParams(): Promise<
+  Awaited<PageProps["params"]>[]
+> {
   return allPages.map((page) => ({
     slug: page.slugAsParams.split("/"),
   }))
 }
 
 export default async function PagePage({ params }: PageProps) {
-  const page = await getPageFromParams(params)
+  const resolvedParams = await params
+  const page = await getPageFromParams(resolvedParams)
 
   if (!page) {
     notFound()
