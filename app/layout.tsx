@@ -78,10 +78,58 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
+  const hydrationSanitizer = `(() => {
+    if (window.__cccHydrationSanitizerInstalled) return
+    window.__cccHydrationSanitizerInstalled = true
+
+    const shouldStrip = (name) =>
+      name === "bis_skin_checked" ||
+      name === "bis_register" ||
+      name.startsWith("__processed_")
+
+    const stripAttributes = (root) => {
+      const nodes = [root, ...root.querySelectorAll("*")]
+      for (const el of nodes) {
+        if (!el || !el.getAttributeNames) continue
+        for (const attr of el.getAttributeNames()) {
+          if (shouldStrip(attr)) el.removeAttribute(attr)
+        }
+      }
+    }
+
+    stripAttributes(document.documentElement)
+
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === "attributes" && mutation.target instanceof Element) {
+          const name = mutation.attributeName
+          if (name && shouldStrip(name)) {
+            mutation.target.removeAttribute(name)
+          }
+        }
+
+        if (mutation.type === "childList") {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof Element) stripAttributes(node)
+          })
+        }
+      }
+    })
+
+    observer.observe(document.documentElement, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+    })
+  })();`
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: hydrationSanitizer }} />
+      </head>
       <body
+        suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
